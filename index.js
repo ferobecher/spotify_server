@@ -27,10 +27,10 @@ let connection;
 (async () => {
     try {
         connection = await mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
+            host: process.env.DB_HOST,
+            user: process.env.DB_USERNAME,
             password: process.env.DB_PASS,
-            database: 'artists',
+            database: process.env.DB_NAME,
         });
 
         console.log('Database connected successfully');
@@ -52,8 +52,7 @@ async function getSongs(album_id) {
             WHERE album.id = ?
             ORDER BY song.id ASC;
             `, [album_id]
-        ); 
-        console.log('Query Results:', results);
+        );
         return results;
     } catch (err) {
         console.log(err);
@@ -63,10 +62,10 @@ async function getSongs(album_id) {
 async function getAlbum(artist_id, album_id) {
     try {
         const [results] = await connection.query(`
-            SELECT artist.name, album.name, album.year, album.album_cover
+            SELECT Artist.name, album.name, album.year, album.album_cover
             FROM album
-            INNER JOIN artist ON artist.id = album.artist_id
-            WHERE album.id = ? AND artist.id = ?;
+            INNER JOIN Artist ON Artist.id = album.artist_id
+            WHERE album.id = ? AND Artist.id = ?;
             `, [album_id, artist_id]
         );
     
